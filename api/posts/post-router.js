@@ -43,4 +43,19 @@ router.post('/', async (req, res) => {
     }
 })
 
+router.delete('/:id', (req, res) => {
+    const id = req.params.id
+    Util.remove(id)
+        .then(count => {
+            if (count > 0) {
+                res.status(200).json({message: `Post has been nuked`})
+            } else {
+                res.status(404).json({message: `user not found`})
+            }
+        }).catch(error => {
+            console.log(error.message)
+            res.status(500).json({ error: "The post could not be removed" })
+        })
+})
+
 module.exports = router
