@@ -92,10 +92,31 @@ router.get('/:id/comments', (req, res) => {
                 res.status(200).json(comments)
             }
         }) .catch (error => {
+            console.log(error.message)
             res.status(500).json({ error: "The comments information could not be retrieved." })
         })
 })
 
+router.post('/:id/comments', (req, res) => {
+    const id = req.params.id
+    const comment = req.body
+    const newComment = {post_id: req.params.id, created_at: new Date(), updated_at: new Date(), text: comment.text}
+    if (!comment.text){
+        res.status(400).json({ errorMessage: "Please provide text for the comment." })
+    } else {
+        Util.insertComment(newComment)
+            .then(comments => {
+                if(comments){
+                    res.status(200).json(comments)
+                } else {
+                    res.status(404).json({ message: "The post with the specified ID does not exist." })
+                }
+            }) .catch (error => {
+                console.log(error.message)
+                res.status(500).json({ error: "There was an error while saving the comment to the database" })
+            })
+    }
+})
 
 //export
 module.exports = router
