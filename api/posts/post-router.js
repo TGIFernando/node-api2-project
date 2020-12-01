@@ -3,6 +3,8 @@ const Util = require("../../data/db")
 
 const router = express.Router()
 
+//post endpoints
+
 router.get('/', async (req,res) => {
     const { query } = req
     try {
@@ -79,4 +81,21 @@ router.put('/:id', (req, res) => {
 
 })
 
+//post/comment endpoints
+router.get('/:id/comments', (req, res) => {
+    const id = req.params.id
+    Util.findPostComments(id)
+        .then(comments => {
+            if(!comments){
+                res.status(404).json({ message: "The post with the specified ID does not exist." })
+            } else {
+                res.status(200).json(comments)
+            }
+        }) .catch (error => {
+            res.status(500).json({ error: "The comments information could not be retrieved." })
+        })
+})
+
+
+//export
 module.exports = router
